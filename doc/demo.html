@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      debugger
+      document.body.style.background = "red";
+      
+      console.log(1);
+      // Promise 不是基于定时器实现的，就是产生一个延迟队列， 等待当前宏任务执行完毕后执行
+      Promise.resolve().then(() => {
+        console.log(2);
+        document.body.style.background = "yellow";
+      });
+      console.log(3);
+    </script>
+  </body>
+</html>

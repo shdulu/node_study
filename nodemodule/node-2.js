@@ -1,0 +1,1 @@
+module.exports = 'this is node-2.js'
