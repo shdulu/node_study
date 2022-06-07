@@ -47,11 +47,29 @@ Module.prototype.load = function () {
   let extension = path.extname(this.id);
   Module._extensions[extension](this);
 };
+
+// 全局的缓存区，用来缓存模块的
+Module._cache = {};
+
 function _require(id) {
   let filepath = Module._resolveFilename(id);
+  if (Module._cache[filepath]) {
+    return Module._cache[filepath].exports;
+  }
   let module = new Module(filepath);
+  Module._cache[filepath] = module;
   module.load(); // 加载模块
   return module.exports;
 }
 const r = _require("./node-2");
+// const r1 = _require("./node-2");
+// const r2 = _require("./node-2");
+
+// 如果不是相对路径或者绝对路径，那么他指有两种可能一种是内置模块，另一种就是第三方模块
+// 查找第三方模块会根据 module.paths 的顺序进行查找，不停的到，找到后就范湖找不到就报错
+// const r2 = _require("node-2");
 console.log(r, "000000000");
+
+// setInterval(() => {
+//   console.log(r);
+// }, 1000);
