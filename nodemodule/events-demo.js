@@ -1,5 +1,5 @@
 // node 都是基于回调的， 解耦可以采用发布订阅模式。 node很多代码都是基于发布订阅
-const EventEmitter = require("./events");
+const EventEmitter = require("./eventsClass");
 
 // const Util = require("util");
 
@@ -48,10 +48,10 @@ function shopping() {
   console.log("购物");
 }
 girl.once("我失恋了", shopping);
-girl.off('我失恋了', shopping)
+girl.off("我失恋了", shopping);
 girl.once("我失恋了", function () {
   console.log("go die");
 });
-girl.emit("我失恋了");
-girl.emit("我失恋了");
-girl.emit("我失恋了");
+girl.emit("我失恋了", "0", "2", [1, 2, 4]);
+girl.emit("我失恋了", '1');
+girl.emit("我失恋了", '2');
