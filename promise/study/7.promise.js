@@ -1,4 +1,4 @@
-const MyPromise = require("./history/1.promise");
+const MyPromise = require("../promise");
 
 const fs = require("fs");
 

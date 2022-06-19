@@ -1,3 +1,5 @@
+// https://promisesaplus.com/
+
 // 原生的es5 是自己实现了promise 不需要考虑兼容
 
 // 1. promise 是一个类 在使用的时候 需要new这个类
@@ -8,7 +10,7 @@
 // 5. 走向失败有两种情况 reject() 用户主动抛出错误
 // 6. 一个promise 中可以then多次 (发布订阅模式)
 // 7. promise 的状态是不能从成功变成失败， 也不能从失败变成成功， 只有pendding的时候状态才能改变
-// 8. 异步情况，需要先把状态存放起来等 resolve,reject调用 发布订阅
+// 8. 异步情况，需要先把状态存放起来等 resolve, reject调用 发布订阅
 // 9. then 方法的成功或者失败的回调函数中返回一个promise，会根据这个 promise 的状态来决定走外层下一个 then 的成功或者失败，并且将原因向下传递
 
 // 我们的promise默认就是pendding 当用户调用resolve时会变成成功态
@@ -18,12 +20,24 @@ const PENDING = "PENDING";
 const FULFILlED = "FULFILlED";
 const REJECTED = "REJECTED";
 
+/**
+ * 解析 promise2 和 x之间的关系 来判断 promise2走resolve还是reject
+ *
+ * @param {*} x - x 的取值决定promise2走成功还是失败
+ * @param {*} promise2
+ * @param {*} resolve promise2 - 成功的回调
+ * @param {*} reject promise2 - 失败的回调
+ * @return {*}
+ */
 function resolvePromise(x, promise2, resolve, reject) {
+  // If promise and x refer to the same object, reject promise with a TypeError as the reason.
   if (promise2 === x) {
-    return reject(new TypeError("循环引用"));
+    return reject(
+      new TypeError(`Chaining cycle detected for promise #<Promise>`)
+    );
   }
   // 判断x 是不是一个promise 先保证x是一个对象或者函数，如果不是对象或者函数那一定不是promise
-  if ((typeof x === "object" && x !== null) || typeof x === "function") {
+  if ((typeof x === " " && x !== null) || typeof x === "function") {
     let called;
     // 还需要看 这个x上有没有then方法 有then方法才说明他是一个promise
     try {
@@ -101,14 +115,22 @@ class MyPromise {
             throw err;
           };
 
+    // 实现then链式调用的关键 - 返回一个promsie
+    // then传递成功和失败函数，针对他的返回值会做不同的处理：
+    // 1) 如果返回的不是promise， 那么这个值会被直接传递到下一次then的成功回调中
+    // 2) 如果想走到下一次then的失败中去，需要在本次then的成功的回调抛出异常
+    // 3) 返回的值是一个promise的情况，则会根据返回的promise来决定走成或失败（解析promise决定走成功还是失败）
     let promise2 = new MyPromise((resolve, reject) => {
       if (this.status === FULFILlED) {
         setTimeout(() => {
+          // 使用 setTimeout 确保 可以拿到 promise2 作为参数传递
+          // new Promsie 同步先执行 promise2可以作为入参到resolvePromise
           try {
+            // 这里用 try catch 捕获到异步异常 -
             let x = onFullfield(this.value);
             resolvePromise(x, promise2, resolve, reject);
           } catch (e) {
-            reject(e);
+            reject(e); // 捕获到异常走到 promise2的异常里
           }
         }, 0);
       }
