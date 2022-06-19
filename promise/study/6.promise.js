@@ -13,7 +13,7 @@
 // 调用reject的时候会变成失败态
 // 成功可以传入成功的原因 失败可以传入失败的原因
 
-const MyPromise = require('./history/1.promise')
+const MyPromise = require('../promise')
 let p = new MyPromise((resolve, reject) => {
   setTimeout(() => {
     resolve("ok");
