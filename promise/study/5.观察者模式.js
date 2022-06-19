@@ -1,3 +1,5 @@
+// 观察者模式基于发布订阅，不需要主动发布事件，被观察者状态变化触发观察者事件更新
+
 class Subject {
   // 被观察者 需要一个自身状态，状态变化了要通知所有的观察者
   constructor(name) {
@@ -9,11 +11,12 @@ class Subject {
     this.observers.push(o);
   }
   setState(newState) {
-    this.state = newState;
-    this.observers.forEach((o) => o.update(this));
+    if (newState !== this.state) {
+      this.state = newState;
+      this.observers.forEach((o) => o.update(this));
+    }
   }
 }
-
 
 class Observer {
   // 观察者
@@ -26,14 +29,14 @@ class Observer {
 }
 
 let s = new Subject("小宝宝");
-let o1 = new Observer("爸爸");
-let o2 = new Observer("妈妈");
+let observe1 = new Observer("爸爸");
+let observe2 = new Observer("妈妈");
 
 // 订阅模式
-s.attach(o1);
-s.attach(o2);
+s.attach(observe1);
+s.attach(observe2);
 
 s.setState("有人咬我，不开心");
 
+module.exports = Subject;
 
-module.exports = Subject

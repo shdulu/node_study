@@ -17,20 +17,29 @@ function sum1(a) {
 let c = sum1(1)(2);
 c(3);
 
-// 判断一个参数的类型
-// typeof 判断类型 只适合基本类型
-// constuctor {}.constuctor = Object
-// instanceof
-// Object.prototype.toString.call()
+// 判断一个参数的类型的方式：
+// 1. typeof 判断类型 只适合基本类型
+// 2. constuctor {}.constuctor = Object
+// 3. instanceOf xxx instanceOf Xxx
+// 4. Object.prototype.toString.call()
 
 function isType(type) {
   return function (val) {
     return Object.prototype.toString.call(val) === `[object ${type}]`;
   };
 }
-let isString = isType("String");
+const isString = isType("String");
+const isNumber = isType("Number");
+const isBoolean = isType("Boolean");
+
 console.log(isString("abc"));
 console.log(isString(123));
+
+let util = {}[("String", "Number", "Boolean")].forEach((method) => {
+  util["is" + method] = isType(method);
+});
+util.isString('1234')
+util.isNumber('1234')
 
 // 偏函数 柯里化函数区别
 
@@ -52,8 +61,8 @@ let curring = (fn, args) => {
   function inner(args = []) {
     // args 每次用户调用的参数列表
     return fn.length > args.length
-      // 累计参数
-      ? (...arr) => inner([...args, ...arr])
+      ? // 累计参数
+        (...arr) => inner([...args, ...arr])
       : fn(...args);
   }
   return inner(args);
