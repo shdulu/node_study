@@ -91,6 +91,7 @@ class MyPromise {
       }
     };
     const reject = (reason) => {
+      // resolve 具有等待功能，会等待接收到的 Promise完成，reject 不具备
       if (this.status === PENDING) {
         this.status = REJECTED;
         this.reason = reason;
@@ -182,6 +183,14 @@ class MyPromise {
       resolve(value);
     });
   }
+  /**
+   * 处理并发请求
+   *
+   * @static
+   * @param {*} values
+   * @return {*} 
+   * @memberof MyPromise
+   */
   static all(values) {
     return new MyPromise((resolve, reject) => {
       let times = 0;
@@ -219,15 +228,21 @@ class MyPromise {
       }
     });
   }
-  static finally(cb) {
+  /**
+   * 1. 无论成功或者失败都会走到 finally
+   * 2. 且finally可以继续then，且把上次的返回值给到下一次
+   * 3. finallCb 如果返回异步promise 需要等待执行
+   * 
+   * */
+  static finally(finallCb) {
     return this.then(
-      (y) => {
-        // 兼容 cb 是promise的情况，等待promise执行完成执行cb
-        return MyPromise.resolve(cb()).then(() => y);
+      (value) => {
+        // 兼容 finallCb 是promise的情况，等待promise执行完成执行finallCb
+        return MyPromise.resolve(finallCb()).then(() => value);
       },
-      (r) => {
-        return MyPromise.resolve(cb()).then(() => {
-          throw r;
+      (reason) => {
+        return MyPromise.resolve(finallCb()).then(() => {
+          throw reason;
         });
       }
     );
