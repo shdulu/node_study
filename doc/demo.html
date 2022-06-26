@@ -8,16 +8,44 @@
   </head>
   <body>
     <script>
-      debugger
+      // 从一个例子理解 微任务和UI渲染的顺序
       document.body.style.background = "red";
-      
+
       console.log(1);
       // Promise 不是基于定时器实现的，就是产生一个延迟队列， 等待当前宏任务执行完毕后执行
-      Promise.resolve().then(() => {
+      // Promise -> setTimeout
+      // Promise.resolve().then(() => {
+      //   console.log(2);
+      //   document.body.style.background = "yellow";
+      // });
+      setTimeout(() => {
         console.log(2);
         document.body.style.background = "yellow";
-      });
+      }, 0);
       console.log(3);
+
+
+
+      // 1 6 2 3 4 8 7 5
+      // 1 6 2 3 8 7 4 5
+      console.log(1);
+      async function async() {
+        console.log(2);
+        await console.log(3);
+        console.log(4);
+      }
+      setTimeout(() => {
+        console.log(5);
+      }, 0);
+      const promise = new Promise((resolve, reject) => {
+        console.log(6);
+        resolve(7);
+      });
+      promise.then((res) => {
+        console.log(res);
+      });
+      async();
+      console.log(8);
     </script>
   </body>
 </html>

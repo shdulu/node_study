@@ -1,84 +1,74 @@
 const fs = require("fs").promises;
+const path = require("path");
 const co = require("co");
-const { wrap } = require("module");
 
-function* read() {
-  let out1 = yield fs.readFile("a.txt", "utf-8");
-  let out2 = yield fs.readFile(out1, "utf-8");
-  return out2;
+// 使用案例：
+function* readFile() {
+  // 这个逻辑更像同步，但是底层我们可以变写成异步的
+  let name = yield fs.readFile(path.resolve(__dirname, "a.txt"), "utf8");
+  let age = yield fs.readFile(path.resolve(__dirname, name), "utf8");
+  return age;
 }
 
-let it = read();
+let it2 = readFile();
+let { value, done } = it2.next();
+if (!done) {
+  value
+    .then((data) => {
+      let { value, done } = it2.next(data);
+      if (!done) {
+        value
+          .then((data) => {
+            let { value, done } = it2.next(data);
+            if (done) {
+              console.log(value);
+            }
+          })
+          .catch((e) => {
+            it2.throw(e);
+          });
+      }
+    })
+    .catch((e) => {
+      it2.throw(e);
+    });
+}
 
-let { value, done } = it.next();
-
-value.then((data) => {
-  // out1 = data -> b.txt
-  let { value, done } = it.next(data);
-  value.then((data2) => {
-    let { value, done } = it.next(data2);
-    console.log(value, "0000000000");
+// co 模块
+const coResult = co(readFile);
+coResult
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((err) => {
+    console.log(err);
   });
-});
 
-// co的方式实现
-// co(read()).then(data => {
-//   console.log(data, '------------')
-// })
-
-// 异步任务串行执行
-// co的实现方式
-function coFn(it) {
+// 异步串行 需要用递归解决
+// 迭代调用next方法
+function coFn(genFn) {
+  const it = genFn(); // 迭代器函数
   return new Promise((resolve, reject) => {
     function next(data) {
-      let { value, done } = it.next(data); // done 是否完成, value本次yield的返回值
-      if (done) {
+      let { value, done } = it.next(data);
+      if (!done) {
+        Promise.resolve(value)
+          .then((data) => {
+            // 没有执行完，递归执行，并把data向下传递
+            next(data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      } else {
+        // done 为 true 结束
         return resolve(value);
       }
-      Promise.resolve(value).then((data) => {
-        next(data);
-      }, reject);
     }
+    // 第一次 undefine
     next();
   });
 }
-// coFn(it)
-
-// const regeneratorRuntime = {
-//   mark(outerFn) {
-//     return outerFn;
-//   },
-//   wrap(innerFunc, outerFn) {
-//     // 核心就是生成器会返回一个迭代器
-//     const _context = {
-//       next: 0,
-//       done: false,
-//       abrupt(type, value) {
-//         _context.next = 'end'
-//         innerFunc(_context);
-//         return value
-//       },
-//       stop() {
-//         this.done = true;
-//       },
-//     };
-//     return {
-//       next(data) {
-//         _context.sent = data;
-//         let value = innerFunc(_context);
-//         return {
-//           value,
-//           done: _context.done,
-//         };
-//       },
-//     };
-//   },
-// };
-
-
-
-async function read1() {
-  let out1 = await fs.readFile("a.txt", "utf-8");
-  let out2 = await fs.readFile(out1, "utf-8");
-  return out2;
-}
+coFn(readFile).then((data) => {
+  console.log(data, "-----------");
+});
