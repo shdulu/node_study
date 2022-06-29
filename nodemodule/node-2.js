@@ -13,3 +13,9 @@ module.exports = obj;
 // exports.a = 100
 // this.a = 900;
 
+
+// let str = require('./node-1')
+// require
+// 1) 读取文件内容
+// 2) 包装函数
+// 3) 默认返回module.exports

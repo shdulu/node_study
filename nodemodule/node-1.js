@@ -20,7 +20,11 @@
  * */
 
 // commonjs规范是node的， 特点就是定义了如何导入、导出、定义模块
-// 导入 - require
+/**
+ * 导入 - require 方法
+ *
+ *
+ * */
 // 导出 - module.exports
 // 定义 - 每一个js文件都是模块，*每次引入文件的时候都会在外层添加一个函数，** 并且改变this指向
 // 默认这个函数中也提供了几个参数 5个，不是global上的参数属性，但是在文件中可以直接访问
@@ -39,7 +43,7 @@
 // node 中常用模块 fs(文件系统) path(路径系统)
 const fs = require("fs"); // require 怎么实现的
 
-// 同步
+// 同步读取文件
 fs.readFileSync("./node-2.js", "utf-8");
 
 // 如何执行一个字符串？
@@ -47,7 +51,17 @@ fs.readFileSync("./node-2.js", "utf-8");
 // 2. new Function() 会创造一个和全局平级的执行环境 也会引用上下级变量
 // 3. vm 虚拟机模块 实现一个安全的执行，但是挂载全局上已经可以获取到
 
-
 const vm = require("vm");
 var a = 100;
 vm.runInThisContext("let a = 90; console.log(a)");
+
+const path = require("path");
+//
+console.log(path.join("a", "b", "c", "..", "/"));
+console.log(path.resolve("a", "b"));
+// 根据已有路径（命令运行路径）来解析绝对路径
+// resolve 不支持 / 会解析成根路径
+// __dirname - 当前绝对路径
+// path.extname 获取文件扩展名
+// path.dirname 当前运行的父级目录
+
