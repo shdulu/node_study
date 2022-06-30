@@ -9,6 +9,7 @@ function Module(id) {
   this.exports = {};
 }
 
+// 策略模式
 Module._extensions = {
   ".js"(module) {
     let source = fs.readFileSync(module.id);
