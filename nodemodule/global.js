@@ -1,4 +1,23 @@
-// 全局属性 就是可以直接访问的属性 module, exports, require, __dirname __filename 并不属于gloable属性
+debugger;
+const tt = require("./test");
+console.log(tt);
+
+console.log(arguments)
+console.log(this)
+
+// require 执行流程 !!!
+// 1. Module._load 加载模块
+// 2. Module._resolveFilename 解析文件名 默认会自动添加 .js .json
+// 3. new Module() => {id: '文件名', exports} 创建module实例
+// 4. 最终返回的就是 module.exports
+// 5. module.load(filename)
+// 6. 根据文件的后缀调用注册的方法（策略模式）Module._extensions[extension](this, filename)
+// 7. 加载js文件，读取文件
+// 8. module._compile(content, filename) 给读取到的内容包装函数 wrapSafe() vm.compileFunction() 
+// exports require module __filename __dirname
+// 9. 最终返回 module.exports
+
+// 全局属性 global 就是可以直接访问的属性 module, exports, require, __dirname __filename 并不属于gloable属性
 // console.log(global);
 
 // console.log(process) // 当前运行的进程
