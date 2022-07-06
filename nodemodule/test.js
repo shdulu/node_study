@@ -1,3 +1,3 @@
-const str = "this is test content";
+const str = "hello world!";
 
 module.exports = str;
