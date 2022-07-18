@@ -50,7 +50,7 @@ Module._resolveFilename = function (id) {
 };
 
 Module.prototype.load = function () {
-  let extension = path.extname(this.id);
+  let extension = path.extname(this.id);              
   Module._extensions[extension] && Module._extensions[extension](this);
 };
 
@@ -73,5 +73,5 @@ function _require(id) {
 }
 
 debugger;
-const str = _require("./test");
+const str = _require("./hello");
 console.log(str);

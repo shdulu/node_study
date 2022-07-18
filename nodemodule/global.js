@@ -1,9 +1,6 @@
 debugger;
-const str = require("./test");
+const str = require("./hello");
 console.log(str);
-
-
-
 
 
 
