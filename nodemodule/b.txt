@@ -1,18 +1,1 @@
-{
-  "name": "node_study",
-  "version": "1.0.0",
-  "description": "",
-  "main": "1.highOrderFn.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "co": "^4.6.0",
-    "ejs": "^3.1.8",
-    "promises-aplus-tests": "^2.1.2",
-    "regenerator-runtime": "^0.13.9"
-  }
-}
+1560
